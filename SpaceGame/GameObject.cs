@@ -21,7 +21,7 @@ namespace SpaceGame
         public virtual void LoadContent(ContentManager content)
         {
             this.sprite = content.Load<Texture2D>("1fwd");
-            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
+            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);          
         }
         public virtual void Draw(SpriteBatch spriteBatch)
         {
