@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,18 @@ namespace SpaceGame
         {
             this.screenWidth = scrrenWidth;
             this.screenHeight = screenHeight;
-          
+            this.fps = 10; // Set the desired frames per second for animation
         }
 
         override public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
             base.LoadContent(content);
             position = new Vector2(screenWidth / 2f, screenHeight - sprite.Height / 2f);
+            sprites = new Texture2D[4];
+            for (int i = 0; i < sprites.Length; i++)
+            {
+                sprites[i] = content.Load<Texture2D>($"{i + 1}fwd");
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -35,6 +41,7 @@ namespace SpaceGame
             HandleInput();
             Move(gameTime);
             HandleScreenBounds();
+            Animate(gameTime);
         }
 
         private void HandleInput()
