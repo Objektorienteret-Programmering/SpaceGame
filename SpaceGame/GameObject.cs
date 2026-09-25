@@ -14,6 +14,10 @@ namespace SpaceGame
         protected Texture2D sprite;
         protected Vector2 position = Vector2.Zero;
         protected Vector2 origin;
+        protected Texture2D[] sprites;
+        protected int fps;
+        private float timeElapsed;
+        private int currentIndex;
         public virtual void LoadContent(ContentManager content)
         {
             this.sprite = content.Load<Texture2D>("1fwd");
@@ -25,5 +29,17 @@ namespace SpaceGame
         }
 
         public abstract void Update(GameTime gameTime);
+
+        protected void Animate(GameTime gameTime)
+        {
+            timeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (timeElapsed >= 1f / fps)
+            {
+                currentIndex = (currentIndex + 1) % sprites.Length;
+                sprite = sprites[currentIndex];
+                timeElapsed = 0f;
+            }
+        }
+
     }
 }

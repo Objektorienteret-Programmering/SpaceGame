@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -15,18 +16,32 @@ namespace SpaceGame
 
         private int screenWidth;
         private int screenHeight;
-
+        private Texture2D[] leftSprites;
+        private Texture2D[] rightSprites;
+        private Texture2D[] forwardSprites;
         public Player(int scrrenWidth, int screenHeight)
         {
             this.screenWidth = scrrenWidth;
             this.screenHeight = screenHeight;
-          
+            leftSprites = new Texture2D[4];
+            rightSprites = new Texture2D[4];
+
+            fps = 10;
         }
 
         override public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
             base.LoadContent(content);
             position = new Vector2(screenWidth / 2f, screenHeight - sprite.Height / 2f);
+
+            sprites = new Texture2D[4];
+            for (int i = 0; i < sprites.Length; i++)
+            {
+                sprites[i] = content.Load<Texture2D>($"{i + 1}fwd");
+                leftSprites[i] = content.Load<Texture2D>($"{i + 1}lft");
+                rightSprites[i] = content.Load<Texture2D>($"{i + 1}rght");
+            }
+            forwardSprites = sprites;
         }
 
         public override void Update(GameTime gameTime)
@@ -35,6 +50,7 @@ namespace SpaceGame
             HandleInput();
             Move(gameTime);
             HandleScreenBounds();
+            Animate(gameTime);
         }
 
         private void HandleInput()
@@ -53,22 +69,28 @@ namespace SpaceGame
             if (keyboardState.IsKeyDown(Keys.A))
             {
                 velocity.X = -1; // Move left
+                sprites = leftSprites; // Set to left-facing sprites
             }
             if (keyboardState.IsKeyDown(Keys.D))
             {
                 velocity.X = 1; // Move right
+                sprites = rightSprites; // Set to right-facing sprites
             }
-
+            
             if (velocity != Vector2.Zero)
             {
                 velocity.Normalize(); // Normalize the velocity to maintain consistent speed
+            }
+            else
+            {
+                sprites = forwardSprites;
             }
         }
         private void Move(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            position+=(velocity*speed) * deltaTime;
+            position += (velocity * speed) * deltaTime;
         }
         private void HandleScreenBounds()
         {
@@ -76,7 +98,7 @@ namespace SpaceGame
             float halfHeight = sprite.Height / 2f;
 
             position.X = MathHelper.Clamp(position.X, halfWidth, screenWidth - halfWidth);
-            position.Y = MathHelper.Clamp(position.Y,halfHeight, screenHeight - halfHeight);
+            position.Y = MathHelper.Clamp(position.Y, halfHeight, screenHeight - halfHeight);
         }
     }
 }
