@@ -9,18 +9,21 @@ using System.Threading.Tasks;
 
 namespace SpaceGame
 {
-    public class GameObject
+    public abstract class GameObject
     {
-        private Texture2D sprite;
-        private Vector2 position = Vector2.Zero;
+        protected Texture2D sprite;
+        protected Vector2 position = Vector2.Zero;
+        protected Vector2 origin;
+        public virtual void LoadContent(ContentManager content)
+        {
+            this.sprite = content.Load<Texture2D>("1fwd");
+            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
+        }
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(sprite, position, null, Color.White, 0f, origin, 1f, SpriteEffects.None, 0f);
+        }
 
-        public void LoadContent(ContentManager content)
-        {
-            this.sprite = content.Load<Texture2D>("1fwd");  
-        }
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(sprite, position, Color.White);
-        }
+        public abstract void Update(GameTime gameTime);
     }
 }

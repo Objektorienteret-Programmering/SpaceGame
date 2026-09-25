@@ -27,7 +27,7 @@ namespace SpaceGame
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            GameObject player = new GameObject();
+            GameObject player = new Player(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
             gameObjects.Add(player);
 
             foreach (var gameObject in gameObjects)
@@ -41,6 +41,11 @@ namespace SpaceGame
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            foreach (var gameObject in gameObjects)
+            {
+                gameObject.Update(gameTime);
+            }
             base.Update(gameTime);
         }
 
