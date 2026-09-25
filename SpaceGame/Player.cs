@@ -16,10 +16,12 @@ namespace SpaceGame
 
         private int screenWidth;
         private int screenHeight;
+        private int frameWidth = 112;
+        private int frameHeight = 150;
 
-        public Player(int scrrenWidth, int screenHeight)
+        public Player(int screenWidth, int screenHeight)
         {
-            this.screenWidth = scrrenWidth;
+            this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
             this.fps = 10; // Set the desired frames per second for animation
         }
@@ -28,11 +30,7 @@ namespace SpaceGame
         {
             base.LoadContent(content);
             position = new Vector2(screenWidth / 2f, screenHeight - sprite.Height / 2f);
-            sprites = new Texture2D[4];
-            for (int i = 0; i < sprites.Length; i++)
-            {
-                sprites[i] = content.Load<Texture2D>($"{i + 1}fwd");
-            }
+            origin = new Vector2(frameWidth / 2f, frameHeight / 2f);
         }
 
         public override void Update(GameTime gameTime)
@@ -41,7 +39,7 @@ namespace SpaceGame
             HandleInput();
             Move(gameTime);
             HandleScreenBounds();
-            Animate(gameTime);
+            AnimateWithSpriteSheet(gameTime, 4);
         }
 
         private void HandleInput()
@@ -71,19 +69,25 @@ namespace SpaceGame
                 velocity.Normalize(); // Normalize the velocity to maintain consistent speed
             }
         }
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            Rectangle sourceRectangle = new Rectangle(currentIndex * frameWidth, 0, frameWidth, frameHeight);
+
+            spriteBatch.Draw(sprite, position, sourceRectangle, Color.White, 0f, origin, 1f, SpriteEffects.None, 0f);
+        }
         private void Move(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            position+=(velocity*speed) * deltaTime;
+            position += (velocity * speed) * deltaTime;
         }
         private void HandleScreenBounds()
         {
-            float halfWidth = sprite.Width / 2f;
-            float halfHeight = sprite.Height / 2f;
+            float halfWidth = frameWidth / 2f;
+            float halfHeight = frameHeight / 2f;
 
             position.X = MathHelper.Clamp(position.X, halfWidth, screenWidth - halfWidth);
-            position.Y = MathHelper.Clamp(position.Y,halfHeight, screenHeight - halfHeight);
+            position.Y = MathHelper.Clamp(position.Y, halfHeight, screenHeight - halfHeight);
         }
     }
 }

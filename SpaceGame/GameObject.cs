@@ -18,11 +18,11 @@ namespace SpaceGame
         protected Texture2D[] sprites;
         protected int fps;
         private float timeElapsed;
-        private int currentIndex;
+        protected int currentIndex;
         public virtual void LoadContent(ContentManager content)
         {
-            this.sprite = content.Load<Texture2D>("1fwd");
-            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);          
+            this.sprite = content.Load<Texture2D>("fwdSpriteSheet");
+            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
         }
         public virtual void Draw(SpriteBatch spriteBatch)
         {
@@ -38,6 +38,16 @@ namespace SpaceGame
             {
                 currentIndex = (currentIndex + 1) % sprites.Length;
                 sprite = sprites[currentIndex];
+                timeElapsed = 0f;
+            }
+        }
+
+        protected void AnimateWithSpriteSheet(GameTime gameTime, int spriteSheetInSheet)
+        {
+            timeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (timeElapsed >= 1f / fps)
+            {
+                currentIndex = (currentIndex + 1) % spriteSheetInSheet;
                 timeElapsed = 0f;
             }
         }
