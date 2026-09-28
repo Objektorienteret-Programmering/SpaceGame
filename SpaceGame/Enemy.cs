@@ -33,14 +33,14 @@ namespace SpaceGame
             return position.Y - origin.Y;
         }
 
-        public override void OnCollision(GameObject other)
-        {
-            base.OnCollision(other);
-            if (other is Player)
-            {
-                Respawn();
-            }
-        }
+        //public override void OnCollision(GameObject other)
+        //{
+        //    base.OnCollision(other);
+        //    if (other is Player)
+        //    {
+        //        Respawn();
+        //    }
+        //}
 
         private void Respawn()
         {

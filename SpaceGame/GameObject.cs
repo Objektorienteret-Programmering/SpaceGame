@@ -20,6 +20,7 @@ namespace SpaceGame
         protected int fps;
         private float timeElapsed;
         private int currentIndex;
+        private HashSet<GameObject> currentCollisions = new();
         public virtual Rectangle CollisionBox
         {
             get
@@ -34,7 +35,7 @@ namespace SpaceGame
         public virtual void LoadContent(ContentManager content)
         {
             this.sprite = content.Load<Texture2D>("1fwd");
-            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);          
+            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
         }
         public virtual void Draw(SpriteBatch spriteBatch)
         {
@@ -54,17 +55,47 @@ namespace SpaceGame
                 timeElapsed = 0f;
             }
         }
-        public virtual void OnCollision(GameObject other)
-        {
-            Debug.WriteLine($"Collision detected between {this.GetType().Name} and {other.GetType().Name}");
-        }
+      
+
+
         public void CheckCollision(GameObject other)
         {
             if (CollisionBox.Intersects(other.CollisionBox))
             {
-                OnCollision(other);
-                other.OnCollision(this);
+                if (!currentCollisions.Contains(other))
+                {
+                    OnCollisionEnter(other);
+                    currentCollisions.Add(other);
+                }
+                else
+                {
+                    OnCollisionStay(other);
+                }
             }
+            else
+            {
+                if (currentCollisions.Contains(other))
+                {
+                    OnCollisionExit(other);
+                    currentCollisions.Remove(other);
+                }
+            }
+        }
+
+        public virtual void OnCollisionExit(GameObject other)
+        {
+            Debug.WriteLine($"Collision exited between {this.GetType().Name} and {other.GetType().Name}");
+        }
+
+
+        public virtual void OnCollisionStay(GameObject other)
+        {
+            //Debug.WriteLine($"Collision stayed between {this.GetType().Name} and {other.GetType().Name}");
+        }
+
+        public virtual void OnCollisionEnter(GameObject other)
+        {
+            Debug.WriteLine($"Collision entered between {this.GetType().Name} and {other.GetType().Name}");
         }
 
     }
