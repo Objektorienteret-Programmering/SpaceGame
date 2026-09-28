@@ -14,6 +14,7 @@ namespace SpaceGame
         protected Texture2D sprite;
         protected Vector2 position = Vector2.Zero;
         protected Vector2 origin;
+        protected float rotation;
         protected Texture2D[] sprites;
         protected int fps;
         private float timeElapsed;
@@ -25,7 +26,7 @@ namespace SpaceGame
         }
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(sprite, position, null, Color.White, 0f, origin, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(sprite, position, null, Color.White, rotation, origin, 1f, SpriteEffects.None, 0f);
         }
 
         public abstract void Update(GameTime gameTime);

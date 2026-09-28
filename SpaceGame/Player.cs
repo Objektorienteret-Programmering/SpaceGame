@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -29,7 +30,7 @@ namespace SpaceGame
             fps = 10;
         }
 
-        override public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
+        override public void LoadContent(ContentManager content)
         {
             base.LoadContent(content);
             position = new Vector2(screenWidth / 2f, screenHeight - sprite.Height / 2f);
