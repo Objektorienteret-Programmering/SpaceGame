@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace SpaceGame
 {
@@ -30,6 +31,20 @@ namespace SpaceGame
         public virtual float GetTop()
         {
             return position.Y - origin.Y;
+        }
+
+        public override void OnCollision(GameObject other)
+        {
+            base.OnCollision(other);
+            if (other is Player)
+            {
+                Respawn();
+            }
+        }
+
+        private void Respawn()
+        {
+            position.Y = -origin.Y;
         }
     }
 }

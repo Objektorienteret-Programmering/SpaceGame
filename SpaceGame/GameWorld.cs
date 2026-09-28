@@ -16,6 +16,7 @@ namespace SpaceGame
         private Random random = new Random();
         private float enemySpawnTimer = 5f; // Spawn immediately on the first update.
         private string[] enemySprites = { "enemyBlack1", "enemyBlue2", "enemyGreen3", "enemyRed4", "meteorBrown_big1" };
+        Texture2D pixel;
         public GameWorld()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -35,6 +36,9 @@ namespace SpaceGame
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             GameObject player = new Player(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
             gameObjects.Add(player);
+
+            pixel = new Texture2D(GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
 
             foreach (var gameObject in gameObjects)
             {
@@ -68,8 +72,8 @@ namespace SpaceGame
                     }
                 }
             }
+            CheckCollisions();
 
-            // Vi ændrer først gameObjects, når gennemløbet er færdigt.
             foreach (GameObject gameObject in removedGameObjects)
             {
                 gameObjects.Remove(gameObject);
@@ -123,11 +127,44 @@ namespace SpaceGame
             {
                 // Draw each game object here
                 gameObject.Draw(_spriteBatch);
+#if DEBUG
+                DrawCollisionBox(gameObject);
+#endif
             }
             _spriteBatch.End();
-            // TODO: Add your drawing code here
-
             base.Draw(gameTime);
+        }
+
+        private void DrawCollisionBox(GameObject gameObject)
+        {
+            Rectangle box = gameObject.CollisionBox;
+
+            _spriteBatch.Draw(pixel,
+                new Rectangle(box.Left, box.Top, box.Width, 1),
+                Color.Red);
+
+            _spriteBatch.Draw(pixel,
+                new Rectangle(box.Left, box.Bottom, box.Width, 1),
+                Color.Red);
+
+            _spriteBatch.Draw(pixel,
+                new Rectangle(box.Left, box.Top, 1, box.Height),
+                Color.Red);
+
+            _spriteBatch.Draw(pixel,
+                new Rectangle(box.Right, box.Top, 1, box.Height),
+                Color.Red);
+        }
+
+        private void CheckCollisions()
+        {
+            for (int i = 0; i < gameObjects.Count; i++)
+            {
+                for (int j = i + 1; j < gameObjects.Count; j++)
+                {
+                    gameObjects[i].CheckCollision(gameObjects[j]);
+                }
+            }
         }
     }
 }
