@@ -21,15 +21,15 @@ namespace SpaceGame
         private float timeElapsed;
         private int currentIndex;
         private HashSet<GameObject> currentCollisions = new();
-        public virtual Rectangle CollisionBox
+        public virtual List<Rectangle> CollisionBoxes
         {
             get
             {
-                return new Rectangle(
-                    (int)(position.X - origin.X),
-                    (int)(position.Y - origin.Y),
-                    sprite.Width,
-                    sprite.Height);
+                return new List<Rectangle> { new Rectangle(
+            (int)(position.X - origin.X),
+            (int)(position.Y - origin.Y),
+            sprite.Width,
+            sprite.Height) };
             }
         }
         public virtual void LoadContent(ContentManager content)
@@ -55,33 +55,50 @@ namespace SpaceGame
                 timeElapsed = 0f;
             }
         }
-      
 
 
+        private bool Intersects(GameObject other)
+        {
+            foreach (Rectangle collisionBox in CollisionBoxes)
+            {
+                foreach (Rectangle otherCollisionBox in other.CollisionBoxes)
+                {
+                    if (collisionBox.Intersects(otherCollisionBox))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
         public void CheckCollision(GameObject other)
         {
-            if (CollisionBox.Intersects(other.CollisionBox))
+            if (Intersects(other))
             {
                 if (!currentCollisions.Contains(other))
                 {
-                    OnCollisionEnter(other);
                     currentCollisions.Add(other);
+                    other.currentCollisions.Add(this);
+
+                    OnCollisionEnter(other);
+                    other.OnCollisionEnter(this);
                 }
                 else
                 {
                     OnCollisionStay(other);
+                    other.OnCollisionStay(this);
                 }
             }
-            else
+            else if (currentCollisions.Contains(other))
             {
-                if (currentCollisions.Contains(other))
-                {
-                    OnCollisionExit(other);
-                    currentCollisions.Remove(other);
-                }
+                currentCollisions.Remove(other);
+                other.currentCollisions.Remove(this);
+
+                OnCollisionExit(other);
+                other.OnCollisionExit(this);
             }
         }
-
         public virtual void OnCollisionExit(GameObject other)
         {
             Debug.WriteLine($"Collision exited between {this.GetType().Name} and {other.GetType().Name}");
@@ -95,7 +112,7 @@ namespace SpaceGame
 
         public virtual void OnCollisionEnter(GameObject other)
         {
-            Debug.WriteLine($"Collision entered between {this.GetType().Name} and {other.GetType().Name}");
+            Debug.WriteLine("current collisions from: " + this.GetType().Name + currentCollisions.Count);
         }
 
     }

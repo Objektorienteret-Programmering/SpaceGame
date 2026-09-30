@@ -20,6 +20,28 @@ namespace SpaceGame
         private Texture2D[] leftSprites;
         private Texture2D[] rightSprites;
         private Texture2D[] forwardSprites;
+
+        public override List<Rectangle> CollisionBoxes
+        {
+            get
+            {
+                return new List<Rectangle> {
+            //Player collider
+            new Rectangle(
+            (int)(position.X - origin.X),
+            (int)(position.Y - origin.Y),
+            sprite.Width,
+            sprite.Height-70),
+            //Flame collider
+            new Rectangle(
+                (int)(position.X - origin.X+35),
+                (int)(position.Y - origin.Y+80),
+                sprite.Width-70,
+                sprite.Height-120) };
+            }
+        }
+
+
         public Player(int scrrenWidth, int screenHeight)
         {
             this.screenWidth = scrrenWidth;

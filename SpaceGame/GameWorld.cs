@@ -128,32 +128,33 @@ namespace SpaceGame
                 // Draw each game object here
                 gameObject.Draw(_spriteBatch);
 #if DEBUG
-                DrawCollisionBox(gameObject);
+                DrawCollisionBoxes(gameObject);
 #endif
             }
             _spriteBatch.End();
             base.Draw(gameTime);
         }
 
-        private void DrawCollisionBox(GameObject gameObject)
+        private void DrawCollisionBoxes(GameObject gameObject)
         {
-            Rectangle box = gameObject.CollisionBox;
+            foreach (var box in gameObject.CollisionBoxes)
+            {
+                _spriteBatch.Draw(pixel,
+                    new Rectangle(box.Left, box.Top, box.Width, 1),
+                    Color.Red);
 
-            _spriteBatch.Draw(pixel,
-                new Rectangle(box.Left, box.Top, box.Width, 1),
-                Color.Red);
+                _spriteBatch.Draw(pixel,
+                    new Rectangle(box.Left, box.Bottom, box.Width, 1),
+                    Color.Red);
 
-            _spriteBatch.Draw(pixel,
-                new Rectangle(box.Left, box.Bottom, box.Width, 1),
-                Color.Red);
+                _spriteBatch.Draw(pixel,
+                    new Rectangle(box.Left, box.Top, 1, box.Height),
+                    Color.Red);
 
-            _spriteBatch.Draw(pixel,
-                new Rectangle(box.Left, box.Top, 1, box.Height),
-                Color.Red);
-
-            _spriteBatch.Draw(pixel,
-                new Rectangle(box.Right, box.Top, 1, box.Height),
-                Color.Red);
+                _spriteBatch.Draw(pixel,
+                    new Rectangle(box.Right, box.Top, 1, box.Height),
+                    Color.Red);
+            }
         }
 
         private void CheckCollisions()
