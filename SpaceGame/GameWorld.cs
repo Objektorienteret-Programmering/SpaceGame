@@ -92,7 +92,7 @@ namespace SpaceGame
 
         private void SpawnEnemy()
         {
-            string spriteName = enemySprites[random.Next(0,5)];
+            string spriteName = enemySprites[random.Next(0, 5)];
             Texture2D sprite = Content.Load<Texture2D>(spriteName);
             float margin = sprite.Width / 2f;
             float y = -sprite.Height / 2f;
@@ -177,9 +177,6 @@ namespace SpaceGame
 
             }
         }
-
-
-
         private void CheckCollisions()
         {
             for (int i = 0; i < gameObjects.Count; i++)
@@ -192,3 +189,7 @@ namespace SpaceGame
         }
     }
 }
+
+
+
+
