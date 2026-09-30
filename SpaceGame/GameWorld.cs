@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SpaceGame
 {
@@ -17,6 +18,7 @@ namespace SpaceGame
         private float enemySpawnTimer = 5f; // Spawn immediately on the first update.
         private string[] enemySprites = { "enemyBlack1", "enemyBlue2", "enemyGreen3", "enemyRed4", "meteorBrown_big1" };
         Texture2D pixel;
+        Texture2D circleSprite;
         public GameWorld()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -36,7 +38,7 @@ namespace SpaceGame
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             GameObject player = new Player(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
             gameObjects.Add(player);
-
+            circleSprite = Content.Load<Texture2D>("CircleTexture");
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.White });
 
@@ -90,7 +92,7 @@ namespace SpaceGame
 
         private void SpawnEnemy()
         {
-            string spriteName = enemySprites[random.Next(enemySprites.Length)];
+            string spriteName = enemySprites[4];
             Texture2D sprite = Content.Load<Texture2D>(spriteName);
             float margin = sprite.Width / 2f;
             float y = -sprite.Height / 2f;
@@ -128,34 +130,40 @@ namespace SpaceGame
                 // Draw each game object here
                 gameObject.Draw(_spriteBatch);
 #if DEBUG
-                DrawCollisionBoxes(gameObject);
+                DrawColliders(gameObject);
 #endif
             }
             _spriteBatch.End();
             base.Draw(gameTime);
         }
 
-        private void DrawCollisionBoxes(GameObject gameObject)
+private void DrawColliders(GameObject gameObject)
+{
+    foreach (Collider2D collider in gameObject.Colliders)
+    {
+        if (collider is BoxCollider boxCollider)
         {
-            foreach (var box in gameObject.CollisionBoxes)
-            {
-                _spriteBatch.Draw(pixel,
-                    new Rectangle(box.Left, box.Top, box.Width, 1),
-                    Color.Red);
+            var box = boxCollider.Bounds;
+            _spriteBatch.Draw(pixel,
+                new Rectangle(box.Left, box.Top, box.Width, 1),
+                Color.Red);
 
-                _spriteBatch.Draw(pixel,
-                    new Rectangle(box.Left, box.Bottom, box.Width, 1),
-                    Color.Red);
+            _spriteBatch.Draw(pixel,
+                new Rectangle(box.Left, box.Bottom, box.Width, 1),
+                Color.Red);
 
-                _spriteBatch.Draw(pixel,
-                    new Rectangle(box.Left, box.Top, 1, box.Height),
-                    Color.Red);
+            _spriteBatch.Draw(pixel,
+                new Rectangle(box.Left, box.Top, 1, box.Height),
+                Color.Red);
 
-                _spriteBatch.Draw(pixel,
-                    new Rectangle(box.Right, box.Top, 1, box.Height),
-                    Color.Red);
-            }
+            _spriteBatch.Draw(pixel,
+                new Rectangle(box.Right, box.Top, 1, box.Height),
+                Color.Red);
+        }       
         }
+    }
+        }
+
 
         private void CheckCollisions()
         {

@@ -21,15 +21,16 @@ namespace SpaceGame
         private float timeElapsed;
         private int currentIndex;
         private HashSet<GameObject> currentCollisions = new();
-        public virtual List<Rectangle> CollisionBoxes
+        public virtual List<Collider2D> Colliders
         {
             get
             {
-                return new List<Rectangle> { new Rectangle(
-            (int)(position.X - origin.X),
-            (int)(position.Y - origin.Y),
-            sprite.Width,
-            sprite.Height) };
+                return new List<Collider2D> { new BoxCollider { Bounds = new Rectangle(
+                (int)(position.X - origin.X),
+                (int)(position.Y - origin.Y),
+                sprite.Width,
+                sprite.Height) }
+                };
             }
         }
         public virtual void LoadContent(ContentManager content)
@@ -59,14 +60,12 @@ namespace SpaceGame
 
         private bool Intersects(GameObject other)
         {
-            foreach (Rectangle collisionBox in CollisionBoxes)
+            foreach (Collider2D collider in Colliders)
             {
-                foreach (Rectangle otherCollisionBox in other.CollisionBoxes)
+                foreach (Collider2D otherCollider in other.Colliders)
                 {
-                    if (collisionBox.Intersects(otherCollisionBox))
-                    {
+                    if (collider.Intersects(otherCollider))
                         return true;
-                    }
                 }
             }
 

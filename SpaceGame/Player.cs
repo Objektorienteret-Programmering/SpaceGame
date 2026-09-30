@@ -21,23 +21,23 @@ namespace SpaceGame
         private Texture2D[] rightSprites;
         private Texture2D[] forwardSprites;
 
-        public override List<Rectangle> CollisionBoxes
+        public override List<Collider2D> Colliders
         {
             get
             {
-                return new List<Rectangle> {
+                return new List<Collider2D> {
             //Player collider
-            new Rectangle(
+            new BoxCollider { Bounds = new Rectangle(
             (int)(position.X - origin.X),
             (int)(position.Y - origin.Y),
             sprite.Width,
-            sprite.Height-70),
+            sprite.Height-70) },
             //Flame collider
-            new Rectangle(
+            new BoxCollider { Bounds = new Rectangle(
                 (int)(position.X - origin.X+35),
                 (int)(position.Y - origin.Y+80),
                 sprite.Width-70,
-                sprite.Height-120) };
+                sprite.Height-120) } };
             }
         }
 
