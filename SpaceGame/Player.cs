@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,8 +11,12 @@ using System.Threading.Tasks;
 
 namespace SpaceGame
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Player : GameObject
     {
+
         private float speed = 200f; // Speed of the player
         private Vector2 velocity = Vector2.Zero; // Velocity of the player
 
@@ -21,6 +26,10 @@ namespace SpaceGame
         private Texture2D[] rightSprites;
         private Texture2D[] forwardSprites;
 
+        private float shootCooldown = 0.2f;
+        private float shootTimer = 0f;
+
+        private SoundEffect laserSound;
         public override List<Collider2D> Colliders
         {
             get
@@ -41,7 +50,6 @@ namespace SpaceGame
             }
         }
 
-
         public Player(int scrrenWidth, int screenHeight)
         {
             this.screenWidth = scrrenWidth;
@@ -55,6 +63,7 @@ namespace SpaceGame
         override public void LoadContent(ContentManager content)
         {
             base.LoadContent(content);
+            laserSound = content.Load<SoundEffect>("sfx_laser1");
             position = new Vector2(screenWidth / 2f, screenHeight - sprite.Height / 2f);
 
             sprites = new Texture2D[4];
@@ -69,7 +78,7 @@ namespace SpaceGame
 
         public override void Update(GameTime gameTime)
         {
-            // Update logic for the player
+            shootTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             HandleInput();
             Move(gameTime);
             HandleScreenBounds();
@@ -99,7 +108,12 @@ namespace SpaceGame
                 velocity.X = 1; // Move right
                 sprites = rightSprites; // Set to right-facing sprites
             }
-            
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && shootTimer <= 0f)
+            {
+                FireLaser();
+                shootTimer = shootCooldown;
+            }
+
             if (velocity != Vector2.Zero)
             {
                 velocity.Normalize(); // Normalize the velocity to maintain consistent speed
@@ -108,6 +122,14 @@ namespace SpaceGame
             {
                 sprites = forwardSprites;
             }
+        }
+
+        private void FireLaser()
+        {
+            Vector2 laserPosition = new Vector2(position.X, position.Y - sprite.Height / 2f);
+            Laser laser = new Laser(laserPosition);
+            GameWorld.Spawn(laser);
+            laserSound.Play();
         }
         private void Move(GameTime gameTime)
         {

@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace SpaceGame
 {
+    /// <summary>
+    /// Represents an object in the game.
+    /// </summary>
     public abstract class GameObject
     {
         protected Texture2D sprite;
@@ -41,7 +44,6 @@ namespace SpaceGame
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(sprite, position, null, Color.White, rotation, origin, 1f, SpriteEffects.None, 0f);
-
         }
 
         public abstract void Update(GameTime gameTime);
@@ -57,7 +59,13 @@ namespace SpaceGame
             }
         }
 
-
+        /// <summary>
+        /// Checks whether this object intersects with another object
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>
+        /// True if the objects overlaps; false otherwise
+        /// </returns>
         private bool Intersects(GameObject other)
         {
             foreach (Collider2D collider in Colliders)
@@ -112,6 +120,15 @@ namespace SpaceGame
         public virtual void OnCollisionEnter(GameObject other)
         {
             Debug.WriteLine("current collisions from: " + this.GetType().Name + currentCollisions.Count);
+        }
+
+        public void ClearCollisions()
+        {
+            foreach (GameObject other in currentCollisions)
+            {
+                other.currentCollisions.Remove(this);
+            }
+            currentCollisions.Clear();
         }
 
     }

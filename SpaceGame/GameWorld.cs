@@ -12,8 +12,8 @@ namespace SpaceGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private List<GameObject> gameObjects = new List<GameObject>();
-        private List<GameObject> newGameObjects = new List<GameObject>();
-        private List<GameObject> removedGameObjects = new List<GameObject>();
+        private static List<GameObject> newGameObjects = new List<GameObject>();
+        private static List<GameObject> removedGameObjects = new List<GameObject>();
         private Random random = new Random();
         private float enemySpawnTimer = 5f; // Spawn immediately on the first update.
         private string[] enemySprites = { "enemyBlack1", "enemyBlue2", "enemyGreen3", "enemyRed4", "meteorBrown_big1" };
@@ -78,12 +78,14 @@ namespace SpaceGame
 
             foreach (GameObject gameObject in removedGameObjects)
             {
+                gameObject.ClearCollisions();
                 gameObjects.Remove(gameObject);
             }
             removedGameObjects.Clear();
 
             foreach (GameObject gameObject in newGameObjects)
             {
+                gameObject.LoadContent(Content);
                 gameObjects.Add(gameObject);
             }
             newGameObjects.Clear();
@@ -117,7 +119,6 @@ namespace SpaceGame
             {
                 enemy = new Enemy(spriteName, spawnPosition, speed);
             }
-            enemy.LoadContent(Content);
             newGameObjects.Add(enemy);
         }
 
@@ -176,6 +177,16 @@ namespace SpaceGame
                 }
 
             }
+        }
+
+        public static void Spawn(GameObject gameObject)
+        {
+            newGameObjects.Add(gameObject);
+        }
+
+        public static void Despawn(GameObject gameObject)
+        {
+            removedGameObjects.Add(gameObject);
         }
         private void CheckCollisions()
         {
