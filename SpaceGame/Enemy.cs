@@ -35,10 +35,12 @@ namespace SpaceGame
             if (other is Player)
             {
                 GameWorld.Despawn(this);
+                GameWorld.Spawn(new Explosion(position, 0.5f));
             }
             if (other is Laser)
             {
                 GameWorld.AddScore(pointOnDeath);
+                GameWorld.Spawn(new Explosion(position,0.5f));
                 GameWorld.Despawn(this);
                 GameWorld.Despawn(other);
             }

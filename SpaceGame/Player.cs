@@ -64,7 +64,6 @@ namespace SpaceGame
         {
             base.LoadContent(content);
             laserSound = content.Load<SoundEffect>("sfx_laser1");
-            position = new Vector2(screenWidth / 2f, screenHeight - sprite.Height / 2f);
 
             sprites = new Texture2D[4];
             for (int i = 0; i < sprites.Length; i++)
@@ -73,7 +72,11 @@ namespace SpaceGame
                 leftSprites[i] = content.Load<Texture2D>($"{i + 1}lft");
                 rightSprites[i] = content.Load<Texture2D>($"{i + 1}rght");
             }
+            sprite = sprites[0];
             forwardSprites = sprites;
+            position = new Vector2(screenWidth / 2f, screenHeight - sprite.Height / 2f);
+            origin = new Vector2(sprite.Width / 2f, sprite.Height / 2f);
+
         }
 
         public override void Update(GameTime gameTime)
@@ -154,7 +157,8 @@ namespace SpaceGame
                 Health--;
                 if (Health<=0)
                 {
-                    GameWorld.Despawn(this);
+                    GameWorld.Spawn(new Explosion(position, 1f));
+                    GameWorld.SetGameOver();
                 }
             }
         }

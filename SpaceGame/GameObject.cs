@@ -19,6 +19,7 @@ namespace SpaceGame
         protected Vector2 position = Vector2.Zero;
         protected Vector2 origin;
         protected float rotation;
+        protected float scale = 1f;
         protected Texture2D[] sprites;
         protected int fps;
         private float timeElapsed;
@@ -38,27 +39,41 @@ namespace SpaceGame
         }
         public virtual void LoadContent(ContentManager content)
         {
-            this.sprite = content.Load<Texture2D>("1fwd");
-            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
         }
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(sprite, position, null, Color.White, rotation, origin, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(sprite, position, null, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);
         }
 
         public abstract void Update(GameTime gameTime);
 
-        protected void Animate(GameTime gameTime)
+        protected bool Animate(GameTime gameTime, bool loop = true)
         {
             timeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             if (timeElapsed >= 1f / fps)
             {
-                currentIndex = (currentIndex + 1) % sprites.Length;
-                sprite = sprites[currentIndex];
+                currentIndex++;
                 timeElapsed = 0f;
-            }
-        }
 
+                if (currentIndex >= sprites.Length)
+                {
+                    if (loop)
+                    {
+                        currentIndex = 0;
+                    }
+                    else
+                    {
+                        currentIndex = sprites.Length - 1;
+                        return true;
+                    }
+                }
+
+                sprite = sprites[currentIndex];
+            }
+
+            return false;
+        }
         private bool Intersects(GameObject other)
         {
             foreach (Collider2D collider in Colliders)

@@ -21,6 +21,13 @@ namespace SpaceGame
         Texture2D pixel;
         Texture2D circleSprite;
         Player player;
+        public enum GameState
+        {
+            Playing,
+            GameOver
+        }
+        private GameOverScreen gameOverScreen;
+        private static GameState gameState = GameState.Playing;
         private static int score;
         public static int Score
         {
@@ -47,19 +54,11 @@ namespace SpaceGame
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-            player = new Player(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
-            gameObjects.Add(player);
-            HUD hud = new HUD(player);
-            gameObjects.Add(hud);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);                
             circleSprite = Content.Load<Texture2D>("CircleTexture");
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.White });
-
-            foreach (var gameObject in gameObjects)
-            {
-                gameObject.LoadContent(Content);
-            }
+            Restart();       
             // TODO: use this.Content to load your game content here
         }
 
@@ -67,33 +66,43 @@ namespace SpaceGame
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
-            enemySpawnTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (enemySpawnTimer >= 2f)
+            if (gameState == GameState.Playing)
             {
-                enemySpawnTimer = 0f;
-                SpawnEnemy();
-            }
+                enemySpawnTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (enemySpawnTimer >= 2f)
+                {
+                    enemySpawnTimer = 0f;
+                    SpawnEnemy();
+                }
 
-            foreach (GameObject gameObject in gameObjects)
-            {
-                gameObject.Update(gameTime);
-            }
-            CheckCollisions();
+                foreach (GameObject gameObject in gameObjects)
+                {
+                    gameObject.Update(gameTime);
+                }
+                CheckCollisions();
 
-            foreach (GameObject gameObject in removedGameObjects)
-            {
-                gameObject.ClearCollisions();
-                gameObjects.Remove(gameObject);
-            }
-            removedGameObjects.Clear();
+                foreach (GameObject gameObject in removedGameObjects)
+                {
+                    gameObject.ClearCollisions();
+                    gameObjects.Remove(gameObject);
+                }
+                removedGameObjects.Clear();
 
-            foreach (GameObject gameObject in newGameObjects)
-            {
-                gameObject.LoadContent(Content);
-                gameObjects.Add(gameObject);
+                foreach (GameObject gameObject in newGameObjects)
+                {
+                    gameObject.LoadContent(Content);
+                    gameObjects.Add(gameObject);
+                }
+                newGameObjects.Clear();
             }
-            newGameObjects.Clear();
+            else if (gameState == GameState.GameOver)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                {
+                    Restart();
+                }
+            }
+   
             base.Update(gameTime);
         }
 
@@ -131,18 +140,50 @@ namespace SpaceGame
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
-            foreach (var gameObject in gameObjects)
+            if (gameState == GameState.GameOver)
             {
-                // Draw each game object here
-                gameObject.Draw(_spriteBatch);
-#if DEBUG
-                DrawColliders(gameObject);
-#endif
+                if (gameOverScreen == null)
+                {
+                    gameOverScreen = new GameOverScreen(Score, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+                    gameOverScreen.LoadContent(Content);
+                }
+                gameOverScreen.Draw(_spriteBatch);
             }
+            else if (gameState == GameState.Playing)
+            {
+                foreach (var gameObject in gameObjects)
+                {
+                    // Draw each game object here
+                    gameObject.Draw(_spriteBatch);
+#if DEBUG
+                    DrawColliders(gameObject);
+#endif
+                }
+            }
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }
+        private void Restart()
+        {
+            removedGameObjects.Clear();
+            gameObjects.Clear();
+            newGameObjects.Clear();
 
+            score = 0;
+            enemySpawnTimer = 0f;     
+
+            player = new Player(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+            Spawn(player);
+            HUD hud = new HUD(player);
+            Spawn(hud);
+            gameOverScreen = null;
+            gameState = GameState.Playing;
+        }
+        public static void SetGameOver()
+        {
+            gameState = GameState.GameOver;
+        }
         private void DrawColliders(GameObject gameObject)
         {
             foreach (Collider2D collider in gameObject.Colliders)
