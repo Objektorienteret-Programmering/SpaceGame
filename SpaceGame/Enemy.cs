@@ -9,6 +9,7 @@ namespace SpaceGame
     {
         private string spriteName;
         private float speed;
+        protected int pointOnDeath = 100; 
 
         public Enemy(string spriteName, Vector2 position, float speed)
         {
@@ -27,23 +28,20 @@ namespace SpaceGame
         {
             position.Y += speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
-
-        public virtual float GetTop()
-        {
-            return position.Y - origin.Y;
-        }
+              
         public override void OnCollisionEnter(GameObject other)
         {
             base.OnCollisionEnter(other);
             if (other is Player)
             {
-                Respawn();
+                GameWorld.Despawn(this);
             }
-        }
-
-        private void Respawn()
-        {
-            position.Y = -origin.Y;
+            if (other is Laser)
+            {
+                GameWorld.AddScore(pointOnDeath);
+                GameWorld.Despawn(this);
+                GameWorld.Despawn(other);
+            }
         }
     }
 }

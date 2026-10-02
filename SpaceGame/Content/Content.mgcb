@@ -234,6 +234,14 @@
 /processorParam:Version=3.8.5.1
 /build:enemyRed4.png
 
+#begin Font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/processorParam:Version=3.8.5.1
+/build:Font.spritefont
+
 #begin Laser.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -59,13 +59,6 @@ namespace SpaceGame
             }
         }
 
-        /// <summary>
-        /// Checks whether this object intersects with another object
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns>
-        /// True if the objects overlaps; false otherwise
-        /// </returns>
         private bool Intersects(GameObject other)
         {
             foreach (Collider2D collider in Colliders)

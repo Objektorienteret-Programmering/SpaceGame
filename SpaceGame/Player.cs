@@ -19,7 +19,7 @@ namespace SpaceGame
 
         private float speed = 200f; // Speed of the player
         private Vector2 velocity = Vector2.Zero; // Velocity of the player
-
+        public int Health { get; private set; } = 3;
         private int screenWidth;
         private int screenHeight;
         private Texture2D[] leftSprites;
@@ -144,6 +144,19 @@ namespace SpaceGame
 
             position.X = MathHelper.Clamp(position.X, halfWidth, screenWidth - halfWidth);
             position.Y = MathHelper.Clamp(position.Y, halfHeight, screenHeight - halfHeight);
+        }
+
+        public override void OnCollisionEnter(GameObject other)
+        {
+            base.OnCollisionEnter(other);
+            if (other is Enemy)
+            {
+                Health--;
+                if (Health<=0)
+                {
+                    GameWorld.Despawn(this);
+                }
+            }
         }
     }
 }

@@ -9,31 +9,31 @@ using System.Threading.Tasks;
 
 namespace SpaceGame
 {
-public class Laser : GameObject
-{
-    private float speed;
-    private Vector2 velocity = new Vector2(0, -1); // Move upwards
-
-    public override void LoadContent(ContentManager content)
+    public class Laser : GameObject
     {
-        sprite = content.Load<Texture2D>("Laser");
-        origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
-    }
-    public Laser(Vector2 position)
-    {
-        this.position = position;
-        speed = 500f; // Set the speed of the laser
-    }
-    public override void Update(GameTime gameTime)
-    {
-        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        private float speed;
+        private Vector2 velocity = new Vector2(0, -1); // Move upwards
 
-        position += (velocity * speed) * deltaTime;
-
-        if (position.Y < 0)
+        public override void LoadContent(ContentManager content)
         {
-            GameWorld.Despawn(this);
+            sprite = content.Load<Texture2D>("Laser");
+            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
+        }
+        public Laser(Vector2 position)
+        {
+            this.position = position;
+            speed = 500f; // Set the speed of the laser
+        }
+        public override void Update(GameTime gameTime)
+        {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            position += (velocity * speed) * deltaTime;
+
+            if (position.Y < 0)
+            {
+                GameWorld.Despawn(this);
+            }
         }
     }
-}
 }

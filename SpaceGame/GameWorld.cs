@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SpaceGame
 {
@@ -19,6 +20,17 @@ namespace SpaceGame
         private string[] enemySprites = { "enemyBlack1", "enemyBlue2", "enemyGreen3", "enemyRed4", "meteorBrown_big1" };
         Texture2D pixel;
         Texture2D circleSprite;
+        Player player;
+        private static int score;
+        public static int Score
+        {
+            get { return score; }
+        }
+
+        public static void AddScore(int points)
+        {
+            score += points;
+        }
         public GameWorld()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -36,8 +48,10 @@ namespace SpaceGame
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            GameObject player = new Player(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+            player = new Player(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
             gameObjects.Add(player);
+            HUD hud = new HUD(player);
+            gameObjects.Add(hud);
             circleSprite = Content.Load<Texture2D>("CircleTexture");
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.White });
@@ -55,7 +69,7 @@ namespace SpaceGame
                 Exit();
 
             enemySpawnTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (enemySpawnTimer >= 5f)
+            if (enemySpawnTimer >= 2f)
             {
                 enemySpawnTimer = 0f;
                 SpawnEnemy();
@@ -64,15 +78,6 @@ namespace SpaceGame
             foreach (GameObject gameObject in gameObjects)
             {
                 gameObject.Update(gameTime);
-
-                if (gameObject is Enemy)
-                {
-                    Enemy enemy = (Enemy)gameObject;
-                    if (enemy.GetTop() > GraphicsDevice.Viewport.Height)
-                    {
-                        removedGameObjects.Add(enemy);
-                    }
-                }
             }
             CheckCollisions();
 
@@ -178,7 +183,6 @@ namespace SpaceGame
 
             }
         }
-
         public static void Spawn(GameObject gameObject)
         {
             newGameObjects.Add(gameObject);
