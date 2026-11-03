@@ -20,15 +20,15 @@ namespace SpaceGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            GameObject player = new GameObject();
+            gameObjects.Add(player);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            GameObject player = new GameObject();
-            gameObjects.Add(player);
+
 
             foreach (var gameObject in gameObjects)
             {
