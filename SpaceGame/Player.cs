@@ -16,16 +16,10 @@ namespace SpaceGame
 
         private int screenWidth;
         private int screenHeight;
-        private Texture2D[] leftSprites;
-        private Texture2D[] rightSprites;
-        private Texture2D[] forwardSprites;
         public Player(int scrrenWidth, int screenHeight)
         {
             this.screenWidth = scrrenWidth;
             this.screenHeight = screenHeight;
-            leftSprites = new Texture2D[4];
-            rightSprites = new Texture2D[4];
-
             fps = 10;
         }
 
@@ -38,10 +32,8 @@ namespace SpaceGame
             for (int i = 0; i < sprites.Length; i++)
             {
                 sprites[i] = content.Load<Texture2D>($"{i + 1}fwd");
-                leftSprites[i] = content.Load<Texture2D>($"{i + 1}lft");
-                rightSprites[i] = content.Load<Texture2D>($"{i + 1}rght");
-            }
-            forwardSprites = sprites;
+            }     
+           
         }
 
         public override void Update(GameTime gameTime)
@@ -69,22 +61,16 @@ namespace SpaceGame
             if (keyboardState.IsKeyDown(Keys.A))
             {
                 velocity.X = -1; // Move left
-                sprites = leftSprites; // Set to left-facing sprites
             }
             if (keyboardState.IsKeyDown(Keys.D))
             {
                 velocity.X = 1; // Move right
-                sprites = rightSprites; // Set to right-facing sprites
             }
             
             if (velocity != Vector2.Zero)
             {
                 velocity.Normalize(); // Normalize the velocity to maintain consistent speed
-            }
-            else
-            {
-                sprites = forwardSprites;
-            }
+            }          
         }
         private void Move(GameTime gameTime)
         {
