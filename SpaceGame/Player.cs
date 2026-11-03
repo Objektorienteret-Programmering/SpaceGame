@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,14 @@ namespace SpaceGame
         private int screenWidth;
         private int screenHeight;
 
-        public Player(int scrrenWidth, int screenHeight)
+        public Player(int screenWidth, int screenHeight)
         {
-            this.screenWidth = scrrenWidth;
+            this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
           
         }
 
-        override public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
+        override public void LoadContent(ContentManager content)
         {
             base.LoadContent(content);
             position = new Vector2(screenWidth / 2f, screenHeight - sprite.Height / 2f);
