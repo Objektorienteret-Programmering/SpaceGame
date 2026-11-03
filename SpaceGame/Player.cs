@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -21,12 +22,12 @@ namespace SpaceGame
         {
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
-          
         }
 
         override public void LoadContent(ContentManager content)
         {
-            base.LoadContent(content);
+            sprite = content.Load<Texture2D>("1fwd");
+            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
             position = new Vector2(screenWidth / 2f, screenHeight - sprite.Height / 2f);
         }
 
@@ -69,7 +70,7 @@ namespace SpaceGame
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            position+=(velocity*speed) * deltaTime;
+            position += (velocity * speed) * deltaTime;
         }
         private void HandleScreenBounds()
         {
@@ -77,7 +78,7 @@ namespace SpaceGame
             float halfHeight = sprite.Height / 2f;
 
             position.X = MathHelper.Clamp(position.X, halfWidth, screenWidth - halfWidth);
-            position.Y = MathHelper.Clamp(position.Y,halfHeight, screenHeight - halfHeight);
+            position.Y = MathHelper.Clamp(position.Y, halfHeight, screenHeight - halfHeight);
         }
     }
 }
